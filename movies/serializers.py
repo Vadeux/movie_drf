@@ -3,6 +3,22 @@ from rest_framework import serializers
 from movies.models import Movie, Category, Actor, Genre, Review
 
 
+class FilterReviewListSerializer(serializers.ListSerializer):
+    """Фильтр комментариев типа parent."""
+
+    def to_representation(self, data):  # data = queryset
+        data = data.filter(parent=None)
+        return super(FilterReviewListSerializer, self).to_representation(data)
+
+
+class RecursiveSerializer(serializers.Serializer):
+    """Рекурсивный вывод детей отзывов."""
+
+    def to_representation(self, value):  # value - значение одной хаписи из базы данных
+        serializer = self.parent.parent.__class__(value, context=self.context)
+        return serializer.data
+
+
 class CategorySerializer(serializers.ModelSerializer):
     """Сериализатор для категорий."""
 
@@ -49,10 +65,14 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
 
 class ReviewSerializer(serializers.ModelSerializer):
     """Вывод отзывов."""
+    # Для создания отступа уровень дочерний.
+    children = RecursiveSerializer(many=True)
 
     class Meta:
+        # Для того, чтобы удалить отзывы без родителя из отступа родителей.
+        list_serializer_class = FilterReviewListSerializer
         model = Review
-        fields = ('name', 'text', 'parent', 'email',)
+        fields = ('name', 'text', 'email', 'children',)
 
 
 class MovieDetailSerializer(serializers.ModelSerializer):

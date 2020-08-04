@@ -24,12 +24,10 @@ class MovieDetailView(APIView):
 
 
 class ReviewCreateView(APIView):
-    """добавление отзыва к фильму."""
+    """Добавление отзыва к фильму."""
 
     def post(self, request):
         review = ReviewCreateSerializer(data=request.data)
-        print(request.data)
         if review.is_valid():
-            print('yes')
             review.save()
         return Response(status=201)
