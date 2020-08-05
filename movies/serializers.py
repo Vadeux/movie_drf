@@ -49,10 +49,12 @@ class MovieListSerializer(serializers.ModelSerializer):
     genres = GenreSerializer(many=True, read_only=True)
     actors = ActorSerializer(many=True, read_only=True)
     directors = ActorSerializer(many=True, read_only=True)
+    rating_user = serializers.BooleanField()
+    middle_star = serializers.IntegerField()
 
     class Meta:
         model = Movie
-        fields = ('title', 'tagline', 'category', 'genres', 'actors', 'directors',)
+        fields = ('id', 'title', 'tagline', 'category', 'genres', 'actors', 'directors', 'rating_user', 'middle_star',)
 
 
 class ReviewCreateSerializer(serializers.ModelSerializer):
@@ -95,11 +97,10 @@ class CrateRatingSerializer(serializers.ModelSerializer):
         model = Rating
         fields = ('star', 'movie',)
 
-    def create(self, validated_data):
-        print(validated_data)
+    def create(self, validated_data):  # Для того чтобы обновлялась запись, а не создавалась новая
         rating = Rating.objects.update_or_create(
             ip=validated_data.get('ip', None),
             movie=validated_data.get('movie', None),
-            defaults={'star': validated_data.get('star')}  # Поел которое мы будем обновлять (star)
+            defaults={'star': validated_data.get('star')}  # Поле которое мы будем обновлять (star)
         )
         return rating
