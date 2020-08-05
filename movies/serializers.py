@@ -14,7 +14,7 @@ class FilterReviewListSerializer(serializers.ListSerializer):
 class RecursiveSerializer(serializers.Serializer):
     """Рекурсивный вывод детей отзывов."""
 
-    def to_representation(self, value):  # value - значение одной хаписи из базы данных
+    def to_representation(self, value):  # value - значение одной записи из базы данных
         serializer = self.parent.parent.__class__(value, context=self.context)
         return serializer.data
 
@@ -35,20 +35,28 @@ class GenreSerializer(serializers.ModelSerializer):
         fields = ('name', 'description', 'url',)
 
 
-class ActorSerializer(serializers.ModelSerializer):
-    """Сериализатор для авторов."""
+class ActorListSerializer(serializers.ModelSerializer):
+    """Сериализатор для актеров и режиссеров."""
 
     class Meta:
         model = Actor
-        exclude = ('image',)
+        fields = ('id', 'name', 'image',)
+
+
+class ActorDetailSerializer(serializers.ModelSerializer):
+    """Сериализатор для актеров и режиссеров."""
+
+    class Meta:
+        model = Actor
+        fields = '__all__'
 
 
 class MovieListSerializer(serializers.ModelSerializer):
     """Сериализатор для списка фильмов."""
     category = CategorySerializer(read_only=True)
     genres = GenreSerializer(many=True, read_only=True)
-    actors = ActorSerializer(many=True, read_only=True)
-    directors = ActorSerializer(many=True, read_only=True)
+    actors = ActorListSerializer(many=True, read_only=True)
+    directors = ActorListSerializer(many=True, read_only=True)
     rating_user = serializers.BooleanField()
     middle_star = serializers.IntegerField()
 
@@ -81,8 +89,8 @@ class MovieDetailSerializer(serializers.ModelSerializer):
     """Сериализатор для одного фильма."""
     category = CategorySerializer(read_only=True)
     genres = GenreSerializer(many=True, read_only=True)
-    actors = ActorSerializer(many=True, read_only=True)
-    directors = ActorSerializer(many=True, read_only=True)
+    actors = ActorListSerializer(many=True, read_only=True)
+    directors = ActorListSerializer(many=True, read_only=True)
     reviews = ReviewSerializer(many=True)
 
     class Meta:
@@ -98,7 +106,7 @@ class CrateRatingSerializer(serializers.ModelSerializer):
         fields = ('star', 'movie',)
 
     def create(self, validated_data):  # Для того чтобы обновлялась запись, а не создавалась новая
-        rating = Rating.objects.update_or_create(
+        rating, _ = Rating.objects.update_or_create(
             ip=validated_data.get('ip', None),
             movie=validated_data.get('movie', None),
             defaults={'star': validated_data.get('star')}  # Поле которое мы будем обновлять (star)
