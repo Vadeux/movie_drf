@@ -98,7 +98,7 @@ class MovieDetailSerializer(serializers.ModelSerializer):
         exclude = ('draft',)
 
 
-class CrateRatingSerializer(serializers.ModelSerializer):
+class CreateRatingSerializer(serializers.ModelSerializer):
     """Оценка (выставление рейтинга) фильмам."""
 
     class Meta:
