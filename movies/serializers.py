@@ -82,7 +82,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         # Для того, чтобы удалить отзывы без родителя из отступа родителей.
         list_serializer_class = FilterReviewListSerializer
         model = Review
-        fields = ('name', 'text', 'email', 'children',)
+        fields = ('id', 'name', 'text', 'email', 'children',)
 
 
 class MovieDetailSerializer(serializers.ModelSerializer):
