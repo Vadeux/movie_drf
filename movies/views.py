@@ -9,13 +9,14 @@ from .serializers import MovieListSerializer, \
     CreateRatingSerializer, \
     ActorListSerializer, \
     ActorDetailSerializer
-from .service import get_client_ip, MovieFilter
+from .service import get_client_ip, MovieFilter, PaginationMovies
 
 
 class MovieViewSet(viewsets.ReadOnlyModelViewSet):
     """Вывод списка или одного фильма"""
     filter_backends = (DjangoFilterBackend,)
     filterset_class = MovieFilter
+    pagination_class = PaginationMovies
 
     def get_queryset(self):
         movies = Movie.objects.filter(draft=False).annotate(
@@ -55,7 +56,6 @@ class ActorsViewSet(viewsets.ReadOnlyModelViewSet):
             return ActorListSerializer
         elif self.action == "retrieve":
             return ActorDetailSerializer
-
 
 # class MovieListView(generics.ListAPIView):
 #     """Список фильмов."""
