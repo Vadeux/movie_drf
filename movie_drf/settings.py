@@ -26,7 +26,7 @@ SECRET_KEY = 'wdo@*46rmu+h!m%t4^honc&&d9#lbn3!()p^x5uv%n2art5ze4'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0']
 
 # Application definition
 
@@ -81,13 +81,24 @@ WSGI_APPLICATION = 'movie_drf.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'movie_lib',
+#         'USER': 'admin',
+#         'PASSWORD': '23877832',
+#         'HOST': '127.0.0.1',
+#         'PORT': '5432',
+#     }
+# }
+
+
+DATABASES = {  # для докера
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'movie_lib',
-        'USER': 'admin',
-        'PASSWORD': '23877832',
-        'HOST': '127.0.0.1',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'HOST': 'dm_db',
         'PORT': '5432',
     }
 }
